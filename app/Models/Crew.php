@@ -10,6 +10,31 @@ class Crew extends Model
 {
     use HasFactory, HasRoles;
 
+    protected $fillable = [
+        'user_id',
+        'vessel_id',
+        'name',
+        'nik',
+        'birthplace',
+        'birthdate',
+        'phone_number',
+        'address',
+        'npwp',
+        'bank_name',
+        'bank_number',
+        'bank_account_name',
+        'marital_status',
+        'title',
+        'sign_on',
+        'degree',
+        'graduation_year',
+        'seafarer_book_number',
+        'seafarer_code',
+        'monsterol_issue_date',
+        'monsterol_expiry_date',
+        'crew_status',
+    ];
+
     public function user()
     {
         return $this->belongsTo(User::class);

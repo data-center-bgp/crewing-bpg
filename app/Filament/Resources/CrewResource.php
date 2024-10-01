@@ -3,15 +3,15 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\CrewResource\Pages;
-use App\Filament\Resources\CrewResource\RelationManagers;
 use App\Models\Crew;
+use App\Models\Vessel;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Actions\Action;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Facades\Auth;
 
 class CrewResource extends Resource
 {
@@ -23,11 +23,14 @@ class CrewResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('user_id')
+                Forms\Components\Hidden::make('user_id')
                     ->required()
-                    ->numeric(),
-                Forms\Components\TextInput::make('vessel_id')
-                    ->numeric(),
+                    ->default(Auth::id()),
+                Forms\Components\Select::make('vessel_id')
+                    ->label('Vessel')
+                    ->options(Vessel::all()->pluck('name', 'id'))
+                    ->searchable()
+                    ->required(),
                 Forms\Components\TextInput::make('name')
                     ->required(),
                 Forms\Components\TextInput::make('nik')
@@ -92,65 +95,90 @@ class CrewResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('user_id')
                     ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('vessel_id')
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('vessel.name')
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('name')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('nik')
                     ->numeric()
+                    ->formatStateUsing(fn ($state) => $state)
                     ->sortable(),
-                Tables\Columns\TextColumn::make('birthplace')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('birthdate')
-                    ->date()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('phone_number')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('address')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('npwp')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('bank_name')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('bank_number')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('bank_account_name')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('marital_status')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('title')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('sign_on')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('degree')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('graduation_year')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('seafarer_book_number')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('seafarer_code')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('monsterol_issue_date')
-                    ->date()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('monsterol_expiry_date')
-                    ->date()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('crew_status')
-                    ->searchable(),
             ])
             ->filters([
                 //
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Action::make('viewDetails')
+                    ->label('View Details')
+                    ->modalHeading('Crew Details')
+                    ->modalDescription('Detailed information about crew')
+                    ->action(fn ($record) => $record)
+                    ->form(fn ($record) => [
+                        Forms\Components\TextInput::make('name')
+                            ->default($record->name)
+                            ->disabled(),
+                        Forms\Components\TextInput::make('nik')
+                            ->default($record->nik)
+                            ->disabled(),
+                        Forms\Components\TextInput::make('birthplace')
+                            ->default($record->birthplace)
+                            ->disabled(),
+                        Forms\Components\DatePicker::make('birthdate')
+                            ->default($record->birthdate)
+                            ->disabled(),
+                        Forms\Components\TextInput::make('phone_number')
+                            ->default($record->phone_number)
+                            ->disabled(),
+                        Forms\Components\TextInput::make('address')
+                            ->default($record->address)
+                            ->disabled(),
+                        Forms\Components\TextInput::make('npwp')
+                            ->default($record->npwp)
+                            ->disabled(),
+                        Forms\Components\TextInput::make('bank_name')
+                            ->default($record->bank_name)
+                            ->disabled(),
+                        Forms\Components\TextInput::make('bank_number')
+                            ->default($record->bank_number)
+                            ->disabled(),
+                        Forms\Components\TextInput::make('bank_account_name')
+                            ->default($record->bank_account_name)
+                            ->disabled(),
+                        Forms\Components\TextInput::make('marital_status')
+                            ->default($record->marital_status)
+                            ->disabled(),
+                        Forms\Components\TextInput::make('title')
+                            ->default($record->title)
+                            ->disabled(),
+                        Forms\Components\TextInput::make('sign_on')
+                            ->default($record->sign_on)
+                            ->disabled(),
+                        Forms\Components\TextInput::make('degree')
+                            ->default($record->degree)
+                            ->disabled(),
+                        Forms\Components\TextInput::make('graduation_year')
+                            ->default($record->graduation_year)
+                            ->disabled(),
+                        Forms\Components\TextInput::make('seafarer_book_number')
+                            ->default($record->seafarer_book_number)
+                            ->disabled(),
+                        Forms\Components\TextInput::make('seafarer_code')
+                            ->default($record->seafarer_code)
+                            ->disabled(),
+                        Forms\Components\DatePicker::make('monsterol_issue_date')
+                            ->default($record->monsterol_issue_dateame)
+                            ->disabled(),
+                        Forms\Components\DatePicker::make('monsterol_expiry_date')
+                            ->default($record->monsterol_expiry_date)
+                            ->disabled(),
+                        Forms\Components\TextInput::make('crew_status')
+                            ->default($record->crew_status)
+                            ->disabled(),
+                    ]),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
