@@ -11,6 +11,7 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
 
 class CrewResource extends Resource
@@ -179,12 +180,33 @@ class CrewResource extends Resource
                             ->default($record->crew_status)
                             ->disabled(),
                     ]),
+                Action::make('manageMcus')
+                    ->label('Manage MCUs')
+                    ->url(fn ($record) => McuResource::getUrl('index', ['crew_id' => $record->id])),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ]);
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        $query = parent::getEloquentQuery();
+
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+
+        if ($user->hasRole('super_admin') || $user->hasRole('admin')) {
+            return $query;
+        }
+
+        if ($user->hasRole('crew')) {
+            return $query->where('user_id', $user->id);
+        }
+
+        return $query;
     }
 
     public static function getRelations(): array
