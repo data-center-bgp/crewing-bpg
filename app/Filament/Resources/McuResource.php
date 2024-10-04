@@ -3,12 +3,15 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\McuResource\Pages;
+use App\Models\Crew;
 use App\Models\Mcu;
 use Filament\Forms;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Support\Facades\Auth;
 
 class McuResource extends Resource
 {
@@ -20,10 +23,24 @@ class McuResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('crew_id')
-                    ->required()
-                    ->numeric(),
-                Forms\Components\TextInput::make('mcu_document')
+                Forms\Components\Hidden::make('crew_id')
+                    ->default(Auth::user()->crew->id)
+                    ->visible(fn () =>
+                    /** @var \App\Models\User */
+                    Auth::user()->hasRole('crew'))
+                    ->required(),
+                Select::make('crew_id')
+                    ->label('Crew')
+                    ->options(Crew::all()->pluck('name', 'id'))
+                    ->searchable()
+                    ->visible(fn () =>
+                    /** @var \App\Models\User */
+                    Auth::user()->hasRole('super_admin') || Auth::user()->hasRole('admin'))
+                    ->required(),
+                Forms\Components\FileUpload::make('mcu_document')
+                    ->label('Dokumen MCU')
+                    ->directory('mcus')
+                    ->acceptedFileTypes(['application/pdf'])
                     ->required(),
                 Forms\Components\DatePicker::make('issue_date')
                     ->required(),
@@ -46,10 +63,13 @@ class McuResource extends Resource
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('crew_id')
-                    ->numeric()
+                Tables\Columns\TextColumn::make('crew.name')
+                    ->label('Crew Name')
+                    ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('mcu_document')
+                    ->label('MCU Document')
+                    ->url(fn ($record) => $record->mcu_document_url)
                     ->searchable(),
                 Tables\Columns\TextColumn::make('issue_date')
                     ->date()
