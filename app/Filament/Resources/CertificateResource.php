@@ -38,17 +38,21 @@ class CertificateResource extends Resource
                     Auth::user()->hasRole('super_admin') || Auth::user()->hasRole('admin'))
                     ->required(),
                 Forms\Components\FileUpload::make('certificate_document')
-                    ->label('Certificate Document')
+                    ->label('Dokumen Sertifikat')
                     ->directory('certificates')
                     ->acceptedFileTypes(['application/pdf'])
                     ->required(),
                 Forms\Components\TextInput::make('certificate_type')
+                    ->label('Jenis Sertifikat')
                     ->required(),
                 Forms\Components\DatePicker::make('issue_date')
+                    ->label('Tanggal Penerbitan')
                     ->required(),
                 Forms\Components\DatePicker::make('expiry_date')
+                    ->label('Tanggal Kadaluwarsa')
                     ->required(),
                 Forms\Components\TextInput::make('certificate_status')
+                    ->label('Status Sertifikat')
                     ->required(),
             ]);
     }
@@ -66,22 +70,26 @@ class CertificateResource extends Resource
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('crew.name')
-                    ->label('Crew Name')
+                    ->label('Nama Crew')
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('certificate_document')
-                    ->label('Certificate Document')
+                    ->label('Sertifikat Dokumen')
                     ->url(fn ($record) => $record->certificate_document_url)
                     ->searchable(),
                 Tables\Columns\TextColumn::make('certificate_type')
+                    ->label('Jenis Sertifikat')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('issue_date')
+                    ->label('Tanggal Penerbitan')
                     ->date()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('expiry_date')
+                    ->label('Tanggal Kadaluwarsa')
                     ->date()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('certificate_status')
+                    ->label('Status Sertifikat')
                     ->searchable(),
             ])
             ->filters([
@@ -111,5 +119,16 @@ class CertificateResource extends Resource
             'create' => Pages\CreateCertificate::route('/create'),
             'edit' => Pages\EditCertificate::route('/{record}/edit'),
         ];
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return 'Sertifikat';
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return 'Sertifikat Crew';
+
     }
 }

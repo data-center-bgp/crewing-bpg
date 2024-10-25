@@ -13,8 +13,8 @@ class Certificate extends Model
 
     protected $fillable = [
         'crew_id',
+        'certificate_document',
         'certificate_type',
-        'certificate_number',
         'issue_date',
         'expiry_date',
         'certificate_status',

@@ -20,4 +20,5 @@ class Resign extends Model
     {
         return $this->belongsTo(Crew::class);
     }
+    
 }
