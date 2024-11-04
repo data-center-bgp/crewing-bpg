@@ -43,10 +43,13 @@ class McuResource extends Resource
                     ->acceptedFileTypes(['application/pdf'])
                     ->required(),
                 Forms\Components\DatePicker::make('issue_date')
+                    ->label('Tanggal Penerbitan')
                     ->required(),
                 Forms\Components\DatePicker::make('expiry_date')
+                    ->label('Tanggal Kadaluwarsa')
                     ->required(),
                 Forms\Components\TextInput::make('certificate_status')
+                    ->label('Status Sertifikat')
                     ->required(),
             ]);
     }
@@ -64,20 +67,23 @@ class McuResource extends Resource
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('crew.name')
-                    ->label('Crew Name')
+                    ->label('Nama Crew')
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('mcu_document')
-                    ->label('MCU Document')
+                    ->label('Dokumen MCU')
                     ->url(fn ($record) => $record->mcu_document_url)
                     ->searchable(),
                 Tables\Columns\TextColumn::make('issue_date')
+                    ->label('Tanggal Penerbitan')
                     ->date()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('expiry_date')
+                    ->label('Tanggal Kadaluwarsa')
                     ->date()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('certificate_status')
+                    ->label('Status Sertifikat')
                     ->searchable(),
             ])
             ->filters([
@@ -107,5 +113,15 @@ class McuResource extends Resource
             'create' => Pages\CreateMcu::route('/create'),
             'edit' => Pages\EditMcu::route('/{record}/edit'),
         ];
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return 'MCU';
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return 'Dokumen MCU';
     }
 }
