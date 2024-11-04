@@ -25,4 +25,9 @@ class PaidLeave extends Model
     {
         return $this->belongsTo(Crew::class);
     }
+
+    public function replacementCrew()
+    {
+        return $this->belongsTo(Crew::class, 'crew_replacement_name');
+    }
 }

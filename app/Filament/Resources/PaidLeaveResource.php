@@ -38,18 +38,32 @@ class PaidLeaveResource extends Resource
                         Auth::user()->hasRole('super_admin') || Auth::user()->hasRole('admin'))
                     ->required(),
                 Forms\Components\DatePicker::make('start_date')
+                    ->label('Tanggal Mulai Cuti')
                     ->required(),
                 Forms\Components\DatePicker::make('end_date')
+                    ->label('Tanggal Selesai Cuti')
                     ->required(),
                 Forms\Components\DatePicker::make('actual_start_date')
+                    ->label('Tanggal Actual Mulai Cuti')
                     ->required(),
                 Forms\Components\DatePicker::make('actual_end_date')
+                    ->label('Tanggal Actual Selesai Cuti')
                     ->required(),
-                Forms\Components\TextInput::make('crew_replacement_name')
+                Select::make('crew_replacement_name')
+                    ->label('Nama Pengganti Crew')
+                    ->options(Crew::all()->pluck('name', 'id'))
+                    ->searchable()
+                    ->reactive()
+                    ->afterStateUpdated(fn (callable $set, $state) => $set('crew_replacement_nik', Crew::find($state)?->nik))
                     ->required(),
                 Forms\Components\TextInput::make('crew_replacement_nik')
+                    ->label('NIK Crew Pengganti')
+                    ->reactive()
+                    ->disabled()
+                    ->numeric()
                     ->required(),
                 Forms\Components\TextInput::make('leave_status')
+                    ->label('Status Cuti')
                     ->required(),
             ]);
     }
@@ -66,27 +80,35 @@ class PaidLeaveResource extends Resource
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('crew_id')
-                    ->numeric()
+                Tables\Columns\TextColumn::make('crew.name')
+                    ->label('Nama Crew')
+                    ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('start_date')
+                    ->label('Tanggal Mulai Cuti')
                     ->date()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('end_date')
+                    ->label('Tanggal Selesai Cuti')
                     ->date()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('actual_start_date')
+                    ->label('Tanggal Actual Mulai Cuti')
                     ->date()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('crew_replacement_name')
+                Tables\Columns\TextColumn::make('actual_end_date')
+                    ->label('Tanggal Actual Selesai Cuti')
+                    ->date()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('replacementCrew.name')
+                    ->label('Nama Crew Pengganti')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('crew_replacement_nik')
+                Tables\Columns\TextColumn::make('replacementCrew.nik')
+                    ->label('NIK Crew Pengganti')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('leave_status')
+                    ->label('Status Cuti')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('actual_end_date')
-                    ->date()
-                    ->sortable(),
             ])
             ->filters([
                 //
@@ -115,5 +137,15 @@ class PaidLeaveResource extends Resource
             'create' => Pages\CreatePaidLeave::route('/create'),
             'edit' => Pages\EditPaidLeave::route('/{record}/edit'),
         ];
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return 'Cuti Crew';
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return 'Cuti Crew';
     }
 }
