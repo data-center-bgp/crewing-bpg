@@ -30,7 +30,7 @@ class ResignResource extends Resource
                     Auth::user()->hasRole('crew'))
                     ->required(),
                 Select::make('crew_id')
-                    ->label('Crew')
+                    ->label('Nama Crew')
                     ->options(Crew::all()->pluck('name', 'id'))
                     ->searchable()
                     ->visible(fn () =>
@@ -38,8 +38,10 @@ class ResignResource extends Resource
                     Auth::user()->hasRole('super_admin') || Auth::user()->hasRole('admin'))
                     ->required(),
                 Forms\Components\DatePicker::make('resign_date')
+                    ->label('Tanggal Resign')
                     ->required(),
                 Forms\Components\TextInput::make('remark')
+                    ->label('Keterangan')
                     ->required(),
             ]);
     }
@@ -56,13 +58,16 @@ class ResignResource extends Resource
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('crew_id')
+                Tables\Columns\TextColumn::make('crew.name')
+                    ->label('Nama Crew')
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('resign_date')
+                    ->label('Tanggal Resign')
                     ->date()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('remark')
+                    ->label('Keterangan')
                     ->searchable(),
             ])
             ->filters([
@@ -92,5 +97,15 @@ class ResignResource extends Resource
             'create' => Pages\CreateResign::route('/create'),
             'edit' => Pages\EditResign::route('/{record}/edit'),
         ];
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return 'Resign';
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return 'Dokumen Resign Crew';
     }
 }
