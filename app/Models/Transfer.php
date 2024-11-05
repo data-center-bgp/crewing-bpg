@@ -19,6 +19,7 @@ class Transfer extends Model
         'vessel_name_after_transferring',
         'previous_title',
         'new_title',
+        'transfer_document',
     ];
 
     public function crew()
@@ -26,8 +27,18 @@ class Transfer extends Model
         return $this->belongsTo(Crew::class);
     }
 
-    public function getMcuDocumentUrlAttribute()
+    public function getTransferDocumentUrlAttribute()
     {
         return Storage::url($this->transfer_document);
+    }
+
+    public function getVesselNameBeforeTransfer()
+    {
+        return $this->belongsTo(Vessel::class, 'vessel_name_before_transferring');
+    }
+
+    public function getVesselNameAfterTransfer()
+    {
+        return $this->belongsTo(Vessel::class, 'vessel_name_after_transferring');
     }
 }
