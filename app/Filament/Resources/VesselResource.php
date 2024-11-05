@@ -30,16 +30,22 @@ class VesselResource extends Resource
                     ->default(Auth::id())
                     ->required(),
                 Forms\Components\TextInput::make('flag')
+                    ->label('Flag')
                     ->required(),
                 Forms\Components\TextInput::make('type')
+                    ->label('Tipe Kapal')
                     ->required(),
                 Forms\Components\TextInput::make('name')
+                    ->label('Nama Kapal')
                     ->required(),
                 Forms\Components\TextInput::make('fleet')
+                    ->label('Fleet')
                     ->required(),
                 Forms\Components\TextInput::make('contract_status')
+                    ->label('Status Kontrak')
                     ->required(),
                 Forms\Components\TextInput::make('hire_status')
+                    ->label('Status Hire')
                     ->required(),
             ]);
     }
@@ -57,16 +63,22 @@ class VesselResource extends Resource
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('flag')
+                    ->label('Flag')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('type')
+                    ->label('Tipe Kapal')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('name')
+                    ->label('Nama Kapal')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('fleet')
+                    ->label('Fleet')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('contract_status')
+                    ->label('Status Kontrak')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('hire_status')
+                    ->label('Status Hire')
                     ->searchable(),
             ])
             ->filters([
@@ -96,5 +108,15 @@ class VesselResource extends Resource
             'create' => Pages\CreateVessel::route('/create'),
             'edit' => Pages\EditVessel::route('/{record}/edit'),
         ];
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return 'Kapal';
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return 'Kapal';
     }
 }
