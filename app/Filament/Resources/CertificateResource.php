@@ -19,6 +19,11 @@ class CertificateResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
+    public static function getNavigationGroup(): ?string
+    {
+        return 'Dokumen Crewing';
+    }
+
     public static function form(Form $form): Form
     {
         return $form

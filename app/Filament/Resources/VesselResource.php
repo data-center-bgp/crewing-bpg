@@ -17,6 +17,11 @@ class VesselResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
+    public static function getNavigationLabel(): string
+    {
+        return 'Data Crew & Kapal';
+    }
+
     public static function form(Form $form): Form
     {
         return $form
