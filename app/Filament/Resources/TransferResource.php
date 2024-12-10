@@ -12,6 +12,7 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
 
 class TransferResource extends Resource
@@ -140,6 +141,24 @@ class TransferResource extends Resource
             'create' => Pages\CreateTransfer::route('/create'),
             'edit' => Pages\EditTransfer::route('/{record}/edit'),
         ];
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        $query = parent::getEloquentQuery();
+
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+
+        if ($user->hasRole('super_admin') || $user->hasRole('admin')) {
+            return $query;
+        }
+
+        if ($user->hasRole('crew')) {
+            return $query->where('crew_id', $user->crew->id);
+        }
+
+        return $query;
     }
 
     public static function getNavigationLabel(): string
