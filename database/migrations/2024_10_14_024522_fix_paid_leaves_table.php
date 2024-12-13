@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
@@ -12,7 +13,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('paid_leaves', function (Blueprint $table) {
-            $table->date('actual_start_date')->change();
+            DB::statement('ALTER TABLE paid_leaves ALTER COLUMN actual_start_date TYPE DATE USING actual_start_date::DATE');
             $table->date('actual_end_date')->after('actual_start_date');
         });
     }
